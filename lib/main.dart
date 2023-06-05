@@ -1,4 +1,3 @@
-import 'package:address_book/row_and_column.dart';
 import 'package:flutter/material.dart';
 
 import 'create_number_page.dart';
@@ -63,8 +62,16 @@ class PhoneListState extends State {
             iconSize: 40,
             color: Colors.blue,
             onPressed: () async {
-              final result = await Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => const RowAndColumnSample()));
+              final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return CreateNumberPage(
+                  phoneModel: PhoneModel(
+                      lastName: '',
+                      lastNameKana: '',
+                      firstName: '',
+                      firstNameKana: '',
+                      phoneNumber: ''),
+                );
+              }));
               if (result != null) {
                 setState(() {
                   _phoneList.add(PhoneModel(
