@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'create_number_page.dart';
+import 'account_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class PhoneModel {
-  PhoneModel(
+class UserAccount {
+  UserAccount(
       {required this.lastName,
       required this.lastNameKana,
       required this.firstName,
@@ -47,7 +47,7 @@ class PhoneListPage extends StatefulWidget {
 }
 
 class PhoneListState extends State {
-  final List<PhoneModel> _phoneList = <PhoneModel>[];
+  final List<UserAccount> _phoneList = <UserAccount>[];
 
   @override
   Widget build(BuildContext context) {
@@ -62,28 +62,13 @@ class PhoneListState extends State {
             iconSize: 40,
             color: Colors.blue,
             onPressed: () async {
-              final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return CreateNumberPage(
-                  phoneModel: PhoneModel(
-                      lastName: '',
-                      lastNameKana: '',
-                      firstName: '',
-                      firstNameKana: '',
-                      phoneNumber: ''),
-                );
-              }));
-              if (result != null) {
-                setState(() {
-                  _phoneList.add(PhoneModel(
-                      lastName: result?.lastName,
-                      lastNameKana: result?.lastNameKana,
-                      firstName: result?.firstName,
-                      firstNameKana: result?.firstNameKana,
-                      phoneNumber: result?.phoneNumber,
-                      email: result?.email,
-                      description: result?.description));
+              await Navigator.of(context).push<void>(MaterialPageRoute(builder: (context) {
+                return AccountPage(onSubmit: (data) {
+                  setState(() {
+                    _phoneList.add(data);
+                  });
                 });
-              }
+              }));
             },
           ),
         ],
@@ -102,16 +87,16 @@ class PhoneListState extends State {
                       title: Text(_phoneList[index].firstName),
                       subtitle: Text(_phoneList[index].phoneNumber),
                       onTap: () async {
-                        final result = await Navigator.of(context)
-                            .push<PhoneModel?>(MaterialPageRoute(builder: ((context) {
-                          return CreateNumberPage(phoneModel: _phoneList[index]);
+                        await Navigator.of(context)
+                            .push<void>(MaterialPageRoute(builder: ((context) {
+                          return AccountPage(
+                              userAccount: _phoneList[index],
+                              onSubmit: (data) {
+                                setState(() {
+                                  _phoneList[index] = data;
+                                });
+                              });
                         })));
-                        setState(() {
-                          if (result != null) {
-                            _phoneList[index].firstName = result.firstName;
-                            _phoneList[index].phoneNumber = result.phoneNumber;
-                          }
-                        });
                       },
                     ),
                     onDismissed: (direction) {
